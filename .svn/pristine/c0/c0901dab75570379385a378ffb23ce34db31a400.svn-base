@@ -1,0 +1,968 @@
+<template>
+  <div class="resettingrapper">
+    <div class="Seongnam">
+      <div class="indiviadd">
+        <span class="inp_entering">
+          <input
+            type="file"
+            accept="image/*"
+            @change="updataimg($event,1)"
+            class="inp_inp inpt_imgone"
+          >
+          <span v-if="form.avatar!= null">
+            <img class="img_img" :src="form.avatar" alt>
+          </span>
+          <span v-else-if="form.avatar==null">
+            <img class="img_centadds" src="../../assets/icon/img_cent12.png" alt>
+          </span>
+        </span>
+      </div>
+      <div class="avaterPop"></div>
+    </div>
+    <div class="centrality">
+      <div class="seekWrapet">
+        <span>姓名</span>
+        <span>
+          <input type="text" v-model="form.user_name" class="inp_centwrt" placeholder="请输入姓名">
+        </span>
+      </div>
+      <div class="rejiggercents">
+        <p class="name_centsadd">
+          <span>性别</span>
+          <span class="mindand">
+            <span class="accreditadd">
+              <label class="genders" v-for="item in genders" :key="item.gender">
+                <span class="genders-radio" :class="{'genders-active' : gender == item.gender}"></span>
+                <input type="radio" :value="item.gender" v-model="gender">
+                {{item.name}}
+              </label>
+            </span>
+            <span class="abnegation"></span>
+          </span>
+        </p>
+      </div>
+      <div class="seekWrapet">
+        <span>电话</span>
+        <span>
+          <input
+            type="text"
+            v-model="form.mobile"
+            class="inp_centwrt"
+            disabled="disabled"
+            placeholder="请输入电话"
+          >
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>邮箱</span>
+        <span>
+          <input type="text" v-model="form.email" class="inp_centwrt" placeholder="请输入姓名">
+        </span>
+      </div>
+      <div class="rejiggeradd">
+        <div class="zhecent" v-if="dialogproencrypt" @click="encryptshurt()"></div>
+        <div class="translate" v-if="dialogproencrypt">
+          <div class="hello">
+            <div class="btn-group">
+              <ul>
+                <li
+                  class="addtents"
+                  :class="[acquisitionadd,acquisitionId == item.id ? acquisitionActive : '']"
+                  v-for="(item,index) in provinceList"
+                  v-on:click="proencryptClick(item.id,item.name)"
+                  :key="index.item"
+                >{{item.name}}</li>
+              </ul>
+            </div>
+            <div class="wrap">
+              <ul>
+                <li
+                  class="propagate"
+                  :class="[unterweltadd,unterweltId == item.id ? unterweltActive : '']"
+                  v-for="(item,index) in citylist"
+                  @click="cityClick(item.id,item.name)"
+                  :key="item.index"
+                >{{item.name}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="name_cents">
+          <span>地址</span>
+          <span>
+            <span>{{pro_name}}</span>
+            <span>{{city_name}}</span>
+            <span class="compileradd" @click="toSelectClick()">编辑</span>
+          </span>
+        </p>
+      </div>
+      <div class="seekWrapet">
+        <span>详细地址</span>
+        <span>
+          <input type="text" v-model="address" class="inp_centwrt" placeholder="请输入详细地址">
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>本人身份证号</span>
+        <span>
+          <input type="text" v-model="card" class="inp_centwrt" placeholder="请输入身份证信息">
+        </span>
+      </div>
+      <div class="Wrap_vent">
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_p"
+              accept="image/*"
+              @change="updataCardPt($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_p!= null">
+              <img class="img_img" :src="card_p" alt>
+            </span>
+            <span v-else-if="card_p == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">身份证正面照片</div>
+            </span>
+          </span>
+        </div>
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_n"
+              accept="image/*"
+              @change="rebellionCardTy($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_n!= null">
+              <img class="img_img" :src="card_n" alt>
+            </span>
+            <span v-else-if="card_n == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">身份证反面照片</div>
+            </span>
+          </span>
+        </div>
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_h"
+              accept="image/*"
+              @change="takeRtCardWy($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_h!= null">
+              <img class="img_img" :src="card_h" alt>
+            </span>
+            <span v-else-if="card_h == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">手持身份证</div>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="hold">
+        <button class="keep" @click="toConservation()">保存</button>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { Toast, Popup, Picker, Indicator } from "mint-ui";
+import "mint-ui/lib/style.css";
+import {
+  imgPreview,
+  straightSeside,
+  repeatViewsTy,
+  holdcertificateTp
+} from "../../../static/imgSend.js";
+let cradIdsuger = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/;
+export default {
+  components: {
+    "mt-picker": Picker,
+    "mt-popup": Popup
+    // VuePickers
+  },
+  data() {
+    return {
+      card_p: "", //身份证正面
+      card_n: "", //身份证反面
+      card_h: "", //手持身份证
+      address: "",
+      card: "",
+      acquisitionadd: "acquisitionadd",
+      acquisitionId: "acquisitionId",
+      acquisitionActive: "acquisition_Active",
+      unterweltadd: "unterweltadd",
+      unterweltId: "unterweltId",
+      unterweltActive: "unterwelt_Active",
+      gender: "male",
+      genders: [
+        {
+          name: "男",
+          gender: "male"
+        },
+        {
+          name: "女",
+          gender: "female"
+        }
+      ],
+      type_sex: "",
+      nickname: "",
+      // sex: "1",
+      data: {
+        avatar: ""
+      },
+      // flagSex: "",
+      proId: "",
+      cityId: "",
+      proName: "",
+      id: "",
+      dialogproencrypt: false,
+      dialogsexual: false,
+      provinceList: [], //省
+      citylist: [], //市
+      listArr: [],
+      sexuallist: [{ name: "男", id: "1" }, { name: "女", id: "2" }],
+      pro_type: "",
+      pro_name: "",
+      city_type: "",
+      city_name: "",
+      user_name: "",
+      sex_name: "",
+      sex_type: "",
+      addressPickerShow: false,
+      show1: false,
+      show: false,
+      //addressSlots:centprolist,
+      form: {
+        fileList: [],
+        avatar: null, //头像
+        user_name: "", //用户名
+        sex: "", //性别 1男 2 女
+        email: "", //邮箱
+        mobile: "", //手机号
+        // province: "", //	省id
+        // city: "", //	市id
+        token: ""
+      }
+    };
+  },
+  mounted() {
+    this.card_p = localStorage.getItem("card_p");
+    this.card_n = localStorage.getItem("card_n");
+    this.card_h = localStorage.getItem("card_h");
+    $(".starandnote").click(function() {
+      $(".starandnote")
+        .find("b")
+        .removeClass("activess");
+      $(this)
+        .find("b")
+        .addClass("activess");
+    });
+  },
+  computed: {},
+  created(e) {
+    // this.pro_type = 1;
+    // alert(this.pro_type)
+    var ua = navigator.userAgent.toLowerCase();
+    //判断是否是苹果手机，是则是true
+    var isIos = ua.indexOf("iphone") != -1 || ua.indexOf("ipad") != -1;
+    if (isIos) {
+      $("input:file").removeAttr("capture");
+    }
+    Indicator.open();
+    setTimeout(() => {
+      Indicator.close();
+    }, 500);
+    toPersonalDetails: {
+      console.log("设置");
+      let getuser_type = localStorage.getItem("user_type");
+      let that = this;
+      let retoken = localStorage.getItem("token");
+      console.log(retoken + "44444");
+      that.$axios
+        .post(window.ajaxSrc + "/client/user/getinfo", {
+          token: retoken
+        })
+        .then(res => {
+          that.form.user_name = res.data.data.user_name;
+          localStorage.setItem("nickname", that.form.user_name);
+          that.sex = res.data.data.sex;
+          that.form.mobile = res.data.data.mobile;
+          that.form.email = res.data.data.email;
+          that.form.avatar = res.data.data.avatar;
+          localStorage.setItem("avatar", res.data.data.avatar);
+          that.city_name = res.data.data.city_name;
+          that.pro_name = res.data.data.province_name;
+          that.pro_type = res.data.data.province;
+          that.city_type = res.data.data.city;
+          that.address = res.data.data.address;
+          //
+          that.card = res.data.data.card;
+          that.card_p = res.data.data.card_p;
+          that.card_n = res.data.data.card_n;
+          that.card_h = res.data.data.card_h;
+
+          let gender = "male"; //默认男
+          if (res.data.data.sex == 2) {
+            gender = "female"; //女
+          }
+          that.gender = gender;
+          console.log("lailaili");
+          console.log(res);
+          console.log(that.gender);
+        });
+    }
+  },
+  methods: {
+    //性别选择
+    convincedClick() {
+      // alert(1);
+      // console.log(e.target.className);
+      // console.log($(this));
+      // $('.starandnote span').removeClass("active");
+      // $(this).addClass("active");
+      // if(flagSex == 1){
+      //   this.man = '../../assets/icon/starnoteadd.png';
+      //   flagSex = 2;
+      // }
+      // if(flagSex == 2){
+      //   this.man = '../../assets/icon/starnoteadd.png';
+      //   flagSex = 2;
+      // }
+    },
+    // confidenceClick(e) {
+    //   alert(e);
+    //  $(this).removeClass("sex_fix");
+    //   $(this).addClass("sex_sents");
+    // },
+    // onValuesChange(picker, values) {
+    //   console.log("123");
+    //   console.log(picker);
+    //   if (values[0] > values[1]) {
+    //     picker.setSlotValue(1, values[0].name);
+    //   }
+    // },
+    // close() {
+    //   this.show1 = false;
+    //   this.show = false;
+    // },
+    //性别
+    // sexualClick() {
+    //   this.dialogsexual = true;
+    // },
+    // windonClick(num, str) {
+    //   console.log(num);
+    //   console.log(str);
+    //   this.sex_type = num || "";
+    //   this.sex_name = str || "";
+    //   console.log("num+str");
+    // },
+    // sexualshurt() {
+    //   this.dialogsexual = false;
+    // },
+    //获取省
+    toSelectClick() {
+      this.dialogproencrypt = true;
+      this.$axios
+        .post(window.ajaxSrc + "/client/index/area", {
+          id: this.proId,
+          name: this.proName
+        })
+        .then(res => {
+          if (res.status == 200) {
+            this.provinceList = res.data.data;
+          }
+        });
+    },
+    encryptshurt() {
+      this.dialogproencrypt = false;
+    },
+    // 获取市
+    proencryptClick(num, str) {
+      this.acquisitionId = num;
+      this.pro_type = num || "";
+      this.pro_name = str || "";
+      localStorage.setItem("pro_name", this.pro_name);
+      //如果只选择省 那么市就清空 只显示省
+      this.city_name = "";
+      this.$axios
+        .post(window.ajaxSrc + "/client/index/city", {
+          province: num
+        })
+        .then(res => {
+          if (res.status == 200) {
+            this.citylist = res.data.data;
+          }
+        });
+    },
+    cityClick(num, str) {
+      this.unterweltId = num;
+      this.city_type = num || "";
+      this.city_name = str || "";
+      localStorage.setItem("city_name", this.city_name);
+      this.dialogproencrypt = false;
+    },
+    updataimg(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      Indicator.open();
+      setTimeout(() => {
+        Indicator.close();
+      }, 4000);
+      imgPreview(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/upavatar",
+        data: {
+          file: formData,
+          token: localStorage.getItem("token")
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("00000");
+          }
+        },
+        error: function(res) {}
+      });
+    },
+    //上传身份证正面
+    updataCardPt(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      straightSeside(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    //身份证反面
+    rebellionCardTy(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      repeatViewsTy(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    //手持身份证
+    takeRtCardWy(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      holdcertificateTp(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    toConservation() {
+      let that = this;
+      if (that.form.avatar == "") {
+        Toast("请上传图片");
+        return false;
+      }
+      if (that.form.user_name == "" || that.form.user_name == "null") {
+        Toast("姓名不能为空");
+        return false;
+      }
+      //验证姓名
+      if (!/^([a-zA-Z0-9\u4e00-\u9fa5\·]{1,10})$/.test(that.form.user_name)) {
+        Toast("请输入正确的姓名格式");
+        return false;
+      }
+      //验证手机号
+      if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(that.form.mobile)) {
+        Toast("请输入正确的手机号格式");
+        return false;
+      }
+      //验证邮箱
+      if (that.form.email != "") {
+        if (
+          !/^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/.test(
+            that.form.email
+          )
+        ) {
+          Toast("请输入正确的邮箱格式");
+          return false;
+        }
+      }
+      if (that.pro_type == "") {
+        Toast("请选择省");
+        return false;
+      }
+      if (that.city_type == "") {
+        Toast("城市信息不完整");
+        return false;
+      }
+      if (that.address == "") {
+        Toast("请填详细地址");
+        return;
+      }
+      if (that.card == "") {
+        Toast("身份证信息不能为空");
+        return;
+      }
+      if (!cradIdsuger.test(that.card)) {
+        Toast("请输入正确的身份证编号");
+        return;
+      }
+      if (that.card_p == "") {
+        Toast("请上传身份证正面图片");
+        return false;
+      }
+      if (that.card_n == "") {
+        Toast("请上传身份证反面图片");
+        return false;
+      }
+      if (that.card_h == "") {
+        Toast("请上传手持身份证图片");
+        return false;
+      }
+      const gender = that.gender;
+      let sex = "";
+      if (gender === "male") {
+        sex = 1;
+      } else if (gender === "female") {
+        sex = 2;
+      }
+      that.$axios
+        .post(window.ajaxSrc + "/client/user/setinfo", {
+          user_name: that.form.user_name,
+          avatar: that.form.avatar,
+          sex: sex,
+          email: that.form.email,
+          mobile: that.form.mobile,
+          province: that.pro_type,
+          city: that.city_type,
+          token: localStorage.getItem("token")
+            ? localStorage.getItem("token")
+            : "",
+          address: that.address,
+          card: that.card,
+          card_p: this.card_p,
+          card_n: this.card_n,
+          card_h: this.card_h
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            Toast("保存成功");
+            that.user_name = res.data.data.user_name;
+            that.$router.push({
+              name: "mine"
+            });
+            localStorage.setItem("user_name", that.form.user_name);
+          }
+        });
+    }
+  }
+};
+</script>
+<style scoped>
+.Wrap_vent {
+  width: 100%;
+  text-align: center;
+}
+.fixWpad {
+  width: 2.34rem;
+  height: 1.44rem;
+  border: 1px dashed #ccc;
+  margin-top: 0.41rem;
+  display: inline-block;
+}
+.fin_sugeimg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-left: 75px;
+  margin-top: 20px;
+}
+.ring_name {
+  font-size: 0.15rem;
+  color: #999;
+}
+.cent_winimg {
+  width: 52px;
+  height: 45px;
+  margin-top: 20px;
+}
+.avaterPop {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+  display: none;
+}
+.inp_centadds:disabled {
+  border: 0;
+  border-bottom: 1px solid #ccc;
+}
+.genders .genders-radio {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.genders input[type="radio"] {
+  display: none;
+}
+.genders .genders-radio.genders-active {
+  background-color: #04ae92;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.maritime_img {
+  width: 0.15rem;
+  height: 0.15rem;
+  vertical-align: middle;
+}
+.emptiness_img {
+  width: 0.15rem;
+  height: 0.15rem;
+  vertical-align: middle;
+}
+.mindand {
+  margin-right: 0.2rem;
+}
+.img_sexadd {
+  width: 0.15rem;
+  height: 0.15rem;
+  vertical-align: middle;
+}
+.img_fis {
+  width: 0.15rem;
+  height: 0.15rem;
+  vertical-align: middle;
+}
+.starandnote b {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 0.15rem;
+  height: 0.15rem;
+  display: inline-block;
+}
+
+.starandnote b.activess {
+  background: #04ae92;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 0.15rem;
+  height: 0.15rem;
+  display: inline-block;
+}
+.starandnote {
+  margin-right: 0.5rem;
+}
+.specificadd {
+  font-size: 0.12rem;
+  color: #666;
+}
+.compileradd {
+  color: #04ae92;
+  font-size: 0.14rem;
+  margin-right: 0.2rem;
+}
+.address-cent {
+  height: 0.3rem;
+  line-height: 0.3rem;
+  border: 1px solid #cccccc;
+}
+.inp_addinp {
+  border: none;
+  border: 0px;
+  outline: none;
+  height: 0.3rem;
+  line-height: 0.3rem;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.name-pleace {
+  height: 0.4rem;
+  line-height: 0.4rem;
+}
+.name_cents {
+  font-size: 0.14rem;
+  color: #666;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.name_centsadd {
+  font-size: 0.14rem;
+  color: #666;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+}
+.rejigger {
+  width: 100%;
+  height: 0.7rem;
+  margin-top: 0.05rem;
+}
+.seekWrapet {
+  width: 100%;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+}
+.inp_centwrt {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 2.5rem;
+  display: inline-block;
+  text-align: right;
+}
+.rejiggeradd {
+  width: 100%;
+  height: 0.4rem;
+  margin-top: 0.05rem;
+  border-bottom: 1px solid #ccc;
+}
+.rejiggercents {
+  width: 100%;
+  height: 0.7rem;
+  border-bottom: 1px solid #ccc;
+  margin-top: 0.05rem;
+}
+.centrality {
+  width: 3.45rem;
+  margin-left: 0.13rem;
+}
+.Seongnam {
+  width: 100%;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  text-align: center;
+}
+.indiviadd {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 1rem;
+  margin-top: 0.2rem;
+}
+.zhecent {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+.translate {
+  background: #ffffff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 3.75rem;
+  height: 4rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+.hello {
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+}
+.btn-group {
+  width: 40%;
+  line-height: 0.44rem;
+  height: 4rem;
+  overflow-y: scroll;
+}
+.addtents {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.wrap ul {
+  background-color: #fff;
+}
+.wrap {
+  width: 100%;
+}
+.active {
+  background-color: #699;
+}
+.propagate {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+  line-height: 0.44rem;
+}
+.hold {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.keep {
+  width: 315px;
+  height: 44px;
+  background: linear-gradient(
+    30deg,
+    rgba(55, 163, 148, 1),
+    rgba(55, 164, 148, 1)
+  );
+  border-radius: 0.22rem;
+  color: #fff;
+  font-size: 0.15rem;
+  border: none;
+  border: 0px;
+  outline: none;
+}
+
+.inp_entering {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 1rem;
+  height: 1rem;
+  line-height: 1rem;
+  display: inline-block;
+}
+.inp_inp {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 0.43rem;
+  border: 1px solid #ccc;
+  height: 0.43rem;
+}
+.img_img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.inpt_imgone {
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  right: 1.3rem;
+  opacity: 0;
+}
+.inptCertone {
+  width: 2.34rem;
+  height: 1.44rem;
+  position: absolute;
+  right: 0.75rem;
+  opacity: 0;
+}
+.acquisition_Active {
+  color: #05ae92;
+}
+.unterwelt_Active {
+  color: #05ae92;
+}
+.img_centadds {
+  width: 1rem;
+  height: 1rem;
+}
+.resettingrapper {
+  width: 3.75rem;
+  background: #fff;
+  display: flex;
+  flex-flow: column;
+  font-size: 14px;
+}
+</style>

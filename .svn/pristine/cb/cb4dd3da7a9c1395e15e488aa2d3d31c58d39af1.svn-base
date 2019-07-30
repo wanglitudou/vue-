@@ -1,0 +1,1340 @@
+<template>
+  <div class="recruitwrapper">
+    
+    <section class="recruit_section">
+      <div class="moreinformation">
+        <span>推荐职位</span>
+        <div class="more_addnews">
+          <span
+            class="place_place"
+            :class="{particularity:isparticularity}"
+            @click="compensation()"
+            v-text = 'particu'
+          ></span>
+          <span>
+            <img class="place_img" src="../assets/icon/dropdown1.png" alt>
+          </span>
+      
+        </div>
+        
+    
+      </div>
+      <div class="popAbout" v-if="pop">
+        <ul>
+          <li @click="allFun">全部</li> 
+          <li v-for="(item,index) in resumeList" @click="resumeFind(item.resume_id,item.name,item.push_status,item.recommend_status)">{{item.name}}</li>   
+        </ul>
+        
+      </div>
+      <div class="message_add">
+        <div class="RecruitmentInformation" v-for="items in resumement" :key="items.index">
+          <div @click="toDetail(items.push_resume_id),readStatus(items.push_resume_id)">
+            <div class="establish_show">
+              <span v-if="items.t1_name!=null" class="add_eslit">{{items.t1_name}}-{{items.t2_name}}
+                <b v-if="items.read_status == 0" class="roundRed">●</b></span>
+              <span v-else-if="items.t1_name==null" class="add_eslit">{{items.t2_name}}
+                <b v-if="items.read_status == 0" class="roundRed"></b></span>
+
+              <span class="add_listasen">{{items.expect_salary}}/月</span>
+            </div>
+            <div class="invariably_add">
+              <div>
+                <span class="addsentadd">{{items.inten_area}}</span>
+              </div>
+              <div>
+                <span class="addsentadd">{{items.education}}</span>
+              </div>
+              <div>
+                <span class="addsentadd">{{items.work_experience_time}}</span>
+              </div>
+              <div>
+                <span class="addsentadd">{{items.work_type}}</span>
+              </div>
+              <div>
+                <span></span>
+              </div>
+              <div>
+                <span></span>
+              </div>
+            </div>
+            <div class="bookedfor">
+              <div class="responsibility">
+                <span class="sent_pleaces">
+                  <span v-if="items.avatar!=null">
+                    <img :src="items.avatar">
+                  </span>
+                  <span v-else>
+                    <img src="../assets/icon/rethink_1.png" alt>
+                  </span>
+                </span>
+                <span class="avoirdupois" v-show="manneradds">{{items.company}}</span>
+                <span class="avoirdupois" v-show="behaviouradds">{{items.user_name}}</span>
+              </div>
+              <div class="speedyadd">{{items.create_time}}</div>
+            </div>
+          </div>
+        </div>
+        <!-- 数据加载 -->
+       <!--  <div class="loadData" v-if="recruitment">
+          <mt-spinner type="fading-circle" color="#05ae92 " v-if="topStatus"></mt-spinner>
+          <span v-else>
+            <span @click="loadMore()" v-show="this.page < this.total_pages">加载更多</span>
+            <span v-show="this.page >= this.total_pages && this.resumement.length != 0">数据全部加载完成</span>
+          </span>
+        </div> -->
+        <div class="nodata" v-if="noData">暂无数据</div>
+      </div>
+    </section>
+    <div v-show="showexhibition" class="developadds">
+        <img src="../assets/icon/ho_a.png" alt>
+     </div>
+     <!--推荐按钮-->
+     <div v-show="remmBtn" class="remmBtn" @click="loadPush">继续推荐</div>
+     <div v-show="watingremmBtn" class="watingremmBtn">等待推荐</div>
+  </div>
+</template>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script>
+import { Spinner, Toast, InfiniteScroll, Indicator } from "mint-ui";
+export default {
+  data() {
+    return {
+      showexhibition: false,
+      descriId: "", //城市id
+      saleProperadd: "saleProperadd",
+      saleProperaddId: "saleProperaddId",
+      celestialaddIndex: "", //职位一级的id
+      equatoraddIndex: "", //职位二级的id
+      concisionaddIndex: "", //类型的id
+      testimonyId: "", //首页薪资的id
+      procedureId: "", //更多种的学历id
+      recordaddId: "", //工作年限
+      demandaddsentId: "", //更多中证书要求一级id
+      trajectoryId: "trajectoryId", //更多中证书要求二级id
+      manneradds: false, //个人显示
+      behaviouradds: false, //企业显示
+      centadddlist: true,
+      dialogdemand: false, //有证
+      demandlist: [],
+      demandlistActive: {},
+      demandlistActive_: {},
+      firstCertificateId: -1, //当前选中的一级证书的index
+      twoCertificate: -1, //当前选中的二级证书的index
+      requireIndex: -1,
+      requirement: "requirement",
+      require_active: "require_active",
+      pickupsadd: "pickupsadd",
+      pickupsId: "pickupsId",
+      pickupsActive: "pickups_Active",
+      trajectoryadd: "trajectoryadd",
+
+      trajectoryActive: "trajectory_Active",
+      endurelist: [], //证书二级
+      distinActive: [],
+      splendid: "",
+      isAppendActive: false, //证书
+      isSugarendActive: false, //不限
+      current: "",
+      total_pages: "",
+      page: "1",
+      pageSize: "",
+      lists: [],
+      list: [],
+      noData: false,
+      topStatus: false,
+      loading: false,
+      count: 0,
+      limitNum: 15,
+      headers: "",
+      moreinformation: "",
+      continueadd: "1",
+      noMore: false,
+      isLoading: false,
+      loading: false,
+      flexible: "",
+      clickProvine: "", //定义省份全局id11111
+      clickCity: "", //定义城市全局id
+      isfixadds: false,
+      iscapacitor: false,
+      isparticularity: false,
+      iscauldron: false,
+      url: [], //banner
+      avatarShow: false,
+      reMmbile: localStorage.getItem("remobile"),
+      config: {
+        url: "", // 网址，默认使用 window.location.href
+        source: "筑材管家", // 来源（QQ空间会用到）, 默认读取head标签：<meta name="site" content="http://overtrue" />
+        title: "筑材管家", // 标题，默认读取 document.title 或者 <meta name="title" content="share.js" />
+        description: "", // 描述, 默认读取head标签：<meta name="description" content="PHP弱类型的实现原理分析" />
+        image: "", // 图片, 默认取网页中第一个img标签
+        sites: ["weibo", "wechat", "qq", "qzone", "wechat", "douban"], // 启用的站点
+        disabled: ["google", "facebook", "twitter"], // 禁用的站点
+        // sites: [ "qq", "wechat"], // 启用的站点
+        // disabled: ["google", "facebook", "weibo", "twitter","douban","qzone"], // 禁用的站点
+        wechatQrcodeTitle: "微信扫一扫：分享" // 微信二维码提示文字
+        // wechatQrcodeHelper:
+        //   "<p>微信里点“发现”，扫一下</p><p>二维码便可将本文分享至朋友圈</p>"
+      },
+      retrieval: "", //搜索招聘、简历信息
+      indication: false,
+      dySaly: "",
+      dataList: {
+        appId: "",
+        nonceStr: "",
+        timestamp: null,
+        url: "",
+        signature: ""
+      },
+      strIds: "",
+      search_value: "",
+      aaa: false,
+      address: "北京",
+      addmasterGet: "",
+      cid: "",
+      name: "",
+      pid: "",
+      pageSize: "", //每页显示的数量
+      schoo_type: "",
+      schoo_name: "",
+      end_name: "",
+      indexs: 0,
+      show1: true,
+      is_favorite: "", //1是已收藏 0是没收藏
+      grass_type: "", //全职兼职id
+      grass_name: "", //全职兼职name
+      matters_type: "",
+      matters_name: "全国",
+      dialogcondition: false, //全职兼职dialog
+      dialogfilling: false, //职位
+      dialogprovince: false, //省市
+      dialogstillmore: false, //更多
+      id: "",
+      remId: "",
+      isShow: false,
+      entrylogin: "未登录",
+      dialog: false,
+      wagesadd: "wagesadd",
+      particularadd: "particularadd",
+      particularId: "particularId",
+      particularActive: "particular_Active",
+      obligationadd: "obligationadd",
+      discoveradd: "discoveradd",
+      discoverId: "discoverId",
+      discoverActive: "discover_Active",
+      wagescentId: "wagescentId",
+      obligationcentId: "obligationcentId",
+      wagesActive: "wages_Active",
+      obligationActive: "obligation_Active",
+  
+      token: "",
+      url: [],
+      recruitment: [], //职位信息
+     
+     
+      spredadd: "0",
+      more: "加载更多",
+      noMore: "加载完成",
+      pop:false,
+      resumeList:"",
+      resumement:"",
+      particu:"全部",
+      remmBtn:false,
+      watingremmBtn:false,
+      globalResumeid:"",
+    };
+  },
+ 
+  mounted: function() {
+
+    var user_type = localStorage.getItem("user_type"); //获取 user_type
+    if (user_type != null && user_type == 2) {
+      this.isShow = true;
+    }
+
+    if (user_type == 1) {
+      this.manneradds = true;
+    } else if (user_type == 2) {
+      this.behaviouradds = true;
+    } else if (user_type == null) {
+      this.manneradds = true;
+    }
+    this.resumeFind('','全部');
+    this.remmBtn = !this.remmBtn;
+    this.watingremmBtn = false;
+
+  },
+  created() {
+    var user_type = localStorage.getItem("user_type");
+    if (user_type == null) {
+      this.$router.push({
+          name: "Login",
+        });
+    }
+   
+  },
+  methods: {
+
+
+    toDetail(resumeId) {//点击跳转详情页
+      var user_type = localStorage.getItem("user_type"); //获取 user_type
+      if (user_type == null || user_type == 1) {
+        this.$router.push({
+          name: "placeparticulars",
+          query: { reusemId: resumeId }
+        });
+      } else if (user_type == 2) {
+        this.$router.push({
+          name: "detailcircumstance",
+          query: { reusemId: resumeId }
+        });
+      }
+      this.indication = false;
+    }, 
+    //点击更新已读状态
+    readStatus(resId){
+      this.$axios
+        .post(window.ajaxSrc + "/client/resume/readStatus", {
+           token: localStorage.getItem("token"),
+           resume_id: resId
+        })
+        .then(res => {
+          this.resumeList = res.data.data;
+        });
+      
+    },
+    compensation() {
+      this.pop = !this.pop;
+      if(this.pop == true){
+        this.resumeFun();
+      }
+    },
+
+    resumeFun(){
+       this.$axios
+        .post(window.ajaxSrc + "/client/resume/resumePosition", {
+           token: localStorage.getItem("token")
+        })
+        .then(res => {
+          this.resumeList = res.data.data;
+        });
+      
+    },
+   
+    addlist() {
+      this.$axios
+        .post(window.ajaxSrc + "/client/resume/index", {
+          token: localStorage.getItem("token")
+            ? localStorage.getItem("token")
+            : "",
+          search_value: this.$route.query.search_value
+        })
+        .then(res => {
+          this.recruitment = res.data.data.items;
+        });
+    },
+  
+   
+    //加载
+    // loadMore() {
+    //   // $("html,body").animate({ scrollTop: 200 }, "slow");
+    //   this.topStatus = true;
+    //   setTimeout(() => {
+    //     this.topStatus = false;
+    //     // this.limitNum = this.limitNum + 5;
+    //     // this.page++;
+    //     this.$axios
+    //       .post(window.ajaxSrc + "/client/resume/index", {
+    //         // search_value: localStorage.getItem("search_val"),
+    //         token: localStorage.getItem("token")
+    //           ? localStorage.getItem("token")
+    //           : "",
+    //         page: ++this.page,
+    //         pageSize: this.limitNum,
+    //         education: this.education ? this.education : "", //学历筛选
+    //         column_id: this.column_id ? this.column_id : "", //证书筛选
+    //         work_experience: this.work_experience ? this.work_experience : "", //工作年限筛选
+    //         inten_job: this.inten_job ? this.inten_job : "", //职位
+    //         work_type: this.work_type ? this.work_type : "", //全职
+    //         expect_salary: this.expect_salary ? this.expect_salary : "" // 薪资
+    //       })
+    //       .then(res => {
+    //         if (res.data.success) {
+    //           this.recruitment = this.recruitment.concat(res.data.data.items);
+    //           console.log(this.recruitment);
+    //         }
+    //       })
+    //       .catch(() => {
+    //         console.log("查询失败");
+    //       });
+    //   }, 500);
+    // },
+
+    resumeFind(resId,resName,resType,resPush){
+       
+       this.$axios
+        .post(window.ajaxSrc + "/client/resume/resumePush", {
+           token: localStorage.getItem("token"),
+           resume_id: resId
+        })
+        .then(res => {
+          this.resumement = res.data.data;
+          this.pop = false;
+          this.particu = resName;
+          this.globalResumeid = resId;
+          if(this.resumement.length == 0){
+            //数据不存在时， 显示该图标
+            this.showexhibition = true;
+          }else{
+            this.showexhibition = false;
+          }
+          if(resType == 1){
+            if(resPush == 1){ //等待推荐
+              this.remmBtn = false;
+              this.watingremmBtn = true;
+            }else{    //继续推荐
+              this.remmBtn = true;
+              this.watingremmBtn = false;
+              
+            }
+            
+          }else{
+            this.remmBtn = false;
+          }
+        });
+    },
+    allFun(){
+      this.resumeFind('','全部');
+      this.pop = false;
+      this.watingremmBtn = false;
+    },
+
+    loadPush(){
+      this.$axios
+        .post(window.ajaxSrc + "/client/resume/pushStatus", {
+          token: localStorage.getItem("token")
+            ? localStorage.getItem("token")
+            : "",
+          resume_id: this.globalResumeid
+        })
+        .then(res => {
+           this.watingremmBtn = true;
+           this.remmBtn = false;
+         // this.recruitment = res.data.data.items;
+        });
+    }
+ 
+  }
+};
+</script>
+<style scoped>
+.developadds {
+  text-align: center;
+}
+.developadds img {
+  width: 2rem;
+  height: 2rem;
+  margin-top: 1.5rem;
+}
+.demandcents {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  /* border: 1px solid #05ae92; */
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #333;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+  text-align: center;
+}
+.loadData {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+  line-height: 30px;
+  color: #00a5ff;
+  font-size: 14px;
+}
+.nodata {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  font-size: 14px;
+  color: #05ae92;
+  align-items: center;
+  justify-content: center;
+}
+.loadData {
+  width: 96%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #05ae92;
+  font-size: 16px;
+}
+.undergo_active {
+  color: #05ae92 !important;
+}
+.educationadd {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #333;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+  text-align: center;
+  font-size: 0.14rem;
+}
+.enthusiasmadd {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  /* border: 1px solid #05ae92; */
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #333;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+  text-align: center;
+}
+.place_place{
+  color:#04AE92;
+  font-size: 15px;
+}
+.restrictionsadd {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #05ae92;
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #05ae92;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+  text-align: center;
+}
+.enduc_active {
+  width: 0.7rem;
+  height: 0.32rem;
+  border-radius: 25px;
+  background: #cdefe9;
+  color: #05ae92;
+  border: 1px solid #05ae92;
+}
+.enthu_active {
+  width: 0.7rem;
+  height: 0.32rem;
+  border-radius: 25px;
+  background: #cdefe9;
+  color: #05ae92;
+  border: 1px solid #05ae92;
+}
+.restri_active {
+  width: 0.7rem;
+  height: 0.32rem;
+  border-radius: 25px;
+  background: #05ae92;
+  color: #fff;
+}
+.btn_anthology {
+  width: 100%;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.3rem;
+}
+.btn_ridicule {
+  width: 1rem;
+  height: 0.36rem;
+  border-radius: 5px;
+  font-size: 0.15rem;
+  border: none;
+  border: 0px;
+  outline: none;
+  color: #04ae92;
+  border: 1px solid #04ae92;
+  background: #fff;
+}
+.btn_indeed {
+  width: 1.94rem;
+  height: 0.36rem;
+  background: rgba(4, 174, 146, 1);
+  border-radius: 5px;
+  font-size: 0.15rem;
+  border: none;
+  border: 0px;
+  outline: none;
+  color: #fff;
+}
+.fixadds {
+  color: #04ae92;
+  font-size: 0.18rem;
+}
+.capacitor {
+  color: #04ae92;
+  font-size: 0.18rem;
+}
+.particularity {
+  color: #04ae92;
+  font-size: 0.18rem;
+}
+.cauldron {
+  color: #04ae92;
+  font-size: 0.18rem;
+}
+.responsibility {
+  color: rgba(51, 51, 51, 1);
+  font-size: 0.14rem;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 2.2rem;
+}
+.speedyadd {
+  font-size: 0.12rem;
+  color: rgba(153, 153, 153, 1);
+}
+.sent_pleaces {
+  width: 0.4rem;
+  height: 0.4rem;
+  background: #ccc;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
+  margin-bottom: 0.05rem;
+}
+.sent_pleaces img {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+}
+.addsentadd {
+  background: rgba(242, 242, 242, 1);
+  padding: 0.05rem;
+}
+.establish_show {
+  width: 100%;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.2rem;
+  font-size: 0.15rem;
+}
+.add_eslit {
+  color: rgba(51, 51, 51, 1);
+}
+.add_listasen {
+  color: rgba(255, 64, 39, 1);
+}
+.invariably_add {
+  width: 100%;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  color: rgba(153, 153, 153, 1);
+  font-size: 0.12rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.2rem;
+}
+.bookedfor {
+  width: 100%;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.2rem;
+}
+.spredadd {
+  color: #04ae92;
+  font-size: 0.17rem;
+}
+.banner {
+  height: 2rem;
+  width: 3.75rem;
+  top: 0;
+  left: 0;
+}
+.banner .swiper-container {
+  width: 100%;
+  height: 2rem;
+}
+
+.banner .swiper-container img {
+  width: 100%;
+  height: 2rem;
+}
+.banner a img {
+  width: 100%;
+  height: 2rem;
+}
+.sige_conroom img {
+  width: 0.32rem;
+  height: 0.35rem;
+  margin-top: 0.06rem;
+  margin-left: 0.1rem;
+}
+.proper:hover {
+  background: #05ae92;
+  color: #fff;
+}
+.category {
+  color: #666;
+  font-size: 0.16rem;
+  height: 0.3rem;
+}
+.zhecent {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+/*薪资弹窗遮罩*/
+.salePop {
+  width: 100%;
+  height: calc(100vh - 2.44rem - 0.5rem);
+  position: fixed;
+  left: 0;
+  top: 2.44rem;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+.saleParties {
+  background: #ffffff;
+  width: 3.75rem;
+  height: 250px;
+  position: absolute;
+  z-index: 100;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+.saleQuence {
+  width: 100%;
+  float: right;
+  padding: 0 0.3rem;
+  text-align: center;
+  margin-top: 0.2rem;
+}
+.saleProperadd {
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: #fff;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+}
+.salePopFied {
+  width: 100%;
+  height: calc(100vh - 0.88rem - 0.5rem);
+  position: fixed;
+  left: 0;
+  top: 0.88rem;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+.addtents {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.wagesadd {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.obligationadd {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.demand {
+  color: #666;
+  height: 0.3rem;
+}
+.propagate {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+  background: rgba(238, 238, 238, 1);
+}
+.propagate:hover {
+  color: #05ae92;
+}
+.hello {
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+}
+.btn-group {
+  width: 40%;
+  line-height: 0.44rem;
+  overflow-y: scroll;
+  /* height: 4rem; */
+}
+.wrap ul {
+  background-color: #fff;
+}
+.wrap {
+  width: 100%;
+  background: rgba(238, 238, 238, 1);
+  overflow: auto;
+  height: calc(100vh - 2.44rem - 0.5rem);
+}
+.active {
+  background-color: #699;
+}
+.educate {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #05ae92;
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #05ae92;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+  text-align: center;
+}
+.parties {
+  background: #ffffff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 3.75rem;
+  height: 250px;
+  position: absolute;
+  z-index: 100;
+  background: #fff;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.partiesstill {
+  width: 3.75rem;
+  /* height: 4.5rem; */
+  z-index: 100;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
+}
+.sequence {
+  width: 100%;
+  float: right;
+  padding: 0 0.3rem;
+  text-align: center;
+  margin-top: 0.2rem;
+}
+.sequence_type {
+  width: 100%;
+  margin-top: 0.1rem;
+  padding: 0 0.2rem;
+  color: #666;
+  height: 1.2rem;
+}
+.endname {
+  color: #666;
+  height: 0.3rem;
+  font-size: 0.16rem;
+}
+.learned {
+  width: 100%;
+  padding: 0 0.2rem;
+  height: 1.6rem;
+}
+.centaddsuger {
+  width: 100%;
+  padding: 0 0.2rem;
+  height: 1rem;
+}
+.translate {
+  background: #fff;
+  width: 3.75rem;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  height: 3.2rem;
+  font-size: 0.15rem;
+  border-top: 1px solid #eee;
+}
+.proper {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #05ae92;
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #05ae92;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+}
+.properadd {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #05ae92;
+  width: 0.7rem;
+  background: #fff;
+  float: left;
+  color: #05ae92;
+  margin-left: 0.05rem;
+  margin-top: 0.1rem;
+}
+.expectadd_active {
+  background: #05ae92;
+  color: #fff;
+}
+.saleActive {
+  color: #05ae92;
+}
+.RecruitmentInformation {
+  width: 100%;
+  height: 1.6rem;
+  background: rgba(255, 255, 255, 1);
+  margin-bottom: 0.05rem;
+  border-radius: 0.05rem;
+}
+.certificate {
+  padding: 5px 6px;
+  line-height: 0.21rem;
+  background: #669999;
+  border-radius: 0.04rem;
+  color: #fff !important ;
+}
+.sequence {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.3rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.15rem;
+}
+.proper {
+  border-radius: 0.16rem;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #05ae92;
+  width: 0.8rem;
+  background: #fff;
+  color: #05ae92;
+}
+.undergoadd {
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: #fff;
+}
+.zhecent {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+.parties {
+  background: #ffffff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 3.75rem;
+  height: 250px;
+  position: absolute;
+  z-index: 100;
+  background: #fff;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.graphics {
+  width: 100%;
+  height: 1rem;
+  display: flex;
+}
+.sculpture_left {
+  width: 0.52rem;
+  height: 0.52rem;
+  background: #ccc;
+  border-radius: 50%;
+  margin-left: 15px;
+  margin-top: 30px;
+}
+.sculpture_left img {
+  width: 0.52rem;
+  height: 0.52rem;
+  border-radius: 50%;
+}
+.sculpture_right {
+  width: 2.62rem;
+}
+.engineer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  color: #818181;
+  letter-spacing: 0;
+  text-align: left;
+  padding: 0 20px;
+}
+.engineer_middle {
+  font-size: 14px;
+  color: rgba(51, 51, 51, 1);
+  letter-spacing: 0;
+  text-align: left;
+}
+.engineer_salary {
+  font-size: 0.15rem;
+  color: #ff4027;
+  letter-spacing: 0;
+  text-align: left;
+  margin-right: -0.05rem;
+}
+.numberofpeople {
+  font-size: 12px;
+  color: #888;
+  margin-left: 20px;
+  margin-top: 10px;
+}
+.detail_enterprise {
+  height: 0.4rem;
+  line-height: 0.4rem;
+}
+.detail_enterprise span {
+  font-size: 12px;
+  color: #ababab;
+  letter-spacing: 0;
+  text-align: left;
+}
+.deadline {
+  margin-left: 20px;
+}
+.educational {
+  margin-left: 0.16rem;
+}
+.nature {
+  margin-left: 0.22rem;
+}
+.certificate {
+  padding: 5px 6px;
+  line-height: 0.21rem;
+  background: #669999;
+  border-radius: 0.04rem;
+  color: #fff !important ;
+}
+.acti_time {
+  float: right;
+}
+.icon_detail {
+  height: 0.36rem;
+  line-height: 0.36rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  margin: 0 27px;
+}
+.icon_detail div img {
+  width: 19px;
+  height: 19px;
+}
+.message_add {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  background: rgba(238, 238, 238, 1);
+  margin-top:.44rem;
+  /* background: rgba(238,238,238,1); */
+}
+.recruitwrapper {
+  width: 3.75rem;
+  padding-bottom: 50px;
+  background: rgba(238, 238, 238, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: absolute;
+}
+.headers {
+  width: 3.75rem;
+  height: 0.44rem;
+  line-height: 0.44rem;
+  display: flex;
+  padding: 0 0.03rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  padding: 0 0.1rem;
+  color: #fff;
+}
+.isFixedBG {
+  width: 3.75rem;
+  height: 0.44rem;
+  line-height: 0.44rem;
+  display: flex;
+  padding: 0 0.03rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  padding: 0 0.1rem;
+  background: #04ae92;
+  color: #fff;
+}
+.isFixed {
+  width: 100%;
+  height: 0.44rem;
+  line-height: 0.44rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 45px;
+  font-size: 0.14rem;
+  color: #666;
+  background: rgba(255, 255, 255, 1);
+  position: fixed;
+  top: 0.44rem;
+  z-index: 999;
+}
+.moreinformation {
+  width: 100%;
+  height: 0.44rem;
+  line-height: 0.44rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 .2rem;
+  font-size: 0.14rem;
+  color: #666;
+  background: rgba(255, 255, 255, 1);
+  position:fixed;
+}
+.address_site {
+  font-size: 14px;
+  color: #fff;
+  text-align: left;
+  width: 0.8rem;
+}
+.dropdown img {
+  width: 12px;
+  height: 6px;
+}
+.search {
+  width: 2.2rem;
+  height: 0.28rem;
+  line-height: 0.28rem;
+  margin-top: 0.08rem;
+  font-size: 12px;
+  align-items: center;
+  border-radius: 4px;
+  margin-left: 0.1rem;
+}
+.search_sousuo {
+  margin-left: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #ababab;
+}
+.search img {
+  width: 22px;
+  height: 22px;
+  margin-left: 1.8rem;
+  top: 0.14rem;
+  position: absolute;
+}
+.signin {
+  font-size: 14px;
+  color: #fff;
+  text-align: left;
+  margin-top: 0.05rem;
+  margin-left: 0.4rem;
+}
+.signin img {
+  width: 0.22rem;
+  height: 0.22rem;
+}
+.recruit_section {
+  width: 100%;
+  height: auto;
+}
+.place_img {
+  width: 5px;
+  height: 5px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.wages_Active {
+  color: #05ae92;
+}
+.obligation_Active {
+  color: #05ae92;
+}
+.discover_Active {
+  color: #05ae92;
+}
+.particular_Active {
+  color: #05ae92;
+}
+.appendActive {
+  color: #05ae92;
+  background: #cdefe9;
+  border: 1px solid #05ae92;
+}
+.isarendActive {
+  color: #05ae92;
+  background: #cdefe9;
+  border: 1px solid #05ae92;
+}
+.requirement {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.require_active {
+  color: #04ae92 !important;
+}
+.cent_num_add {
+  border: 1px solid #52ae92;
+  border-radius: 50%;
+  margin-left: 0.05rem;
+  padding: 0rem 0.04rem;
+}
+.distinction {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+  line-height: 0.44rem;
+}
+.corrections {
+  width: 100%;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  background: #fff;
+  color: #333;
+  position: absolute;
+  bottom: 0rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.4rem;
+  font-size: 0.15rem;
+}
+.vanishadd {
+  width: 1.1rem;
+  height: 0.36rem;
+  border: 1px solid rgba(4, 174, 146, 1);
+  border-radius: 5px;
+  color: rgba(4, 174, 146, 1);
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #04ae92;
+}
+.renovateadd {
+  width: 1.5rem;
+  height: 0.36rem;
+  background: rgba(4, 174, 146, 1);
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 1);
+  border: 0;
+  outline: none;
+  cursor: pointer;
+}
+.pickups_Active {
+  color: #05ae92;
+}
+.trajectory_Active {
+  color: #05ae92;
+}
+.iscapacitor {
+  color: #05ae92;
+}
+.demonstrateadds {
+  width: 3.75rem;
+  height: 4rem;
+  position: fixed;
+  z-index: 100;
+  background: #fff;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.wrapadd {
+  width: 1rem;
+  text-align: center;
+}
+.suagarcentwoulders {
+  width: 3.75rem;
+  height: 4rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  background: #fff;
+}
+.avoirdupois {
+  margin-left: 0.09rem;
+}
+.centaddproject {
+  text-align: center;
+}
+.sale_Active {
+  color: #05ae92;
+}
+.popAbout{
+   width:116px;
+   background:#fff;
+   position: fixed;
+   right: 0;
+   top:44px;
+   font-size: 12px;
+   box-shadow:0px 2px 20px 1px rgba(188,189,189,0.47);
+}
+.popAbout ul{
+  width: calc(100% - 24px);
+  margin:0 auto;
+}
+.popAbout ul li{
+  padding: .1rem 0;
+}
+.remmBtn{
+  width:1.16rem;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  background:#fff;
+  box-shadow:0px 2px 20px 1px rgba(188,189,189,0.47);
+  position: absolute;
+  bottom: 1.44rem;
+  right: .2rem;
+  border-radius: .4rem;
+  text-align: center;
+  color:#04AE92;
+  font-size: .15rem;
+}
+.watingremmBtn{
+   width:1.16rem;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  background:#999;
+  box-shadow:0px 2px 20px 1px rgba(188,189,189,0.47);
+  position: absolute;
+  bottom: 1.44rem;
+  right: .2rem;
+  border-radius: .4rem;
+  text-align: center;
+  color:#fff;
+  font-size: .15rem;
+}
+.roundRed{
+  color:#FF4027;
+  margin-left:.2rem;
+}
+</style>

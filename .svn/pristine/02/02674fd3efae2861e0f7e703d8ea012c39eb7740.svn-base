@@ -1,0 +1,1132 @@
+<template>
+  <div class="resettingrapper">
+    <div class="Seongnam">
+      <div class="indiviadd">
+        <span class="inp_entering">
+          <input
+            type="file"
+            accept="image/*"
+            @change="updataimg($event,1)"
+            class="inp_inp inpt_imgone"
+          >
+          <span v-if="form.avatar!= null">
+            <img class="img_img" :src="form.avatar" alt>
+          </span>
+          <span v-else-if="form.avatar==null">
+            <img class="img_centadds" src="../../assets/icon/out_1.png" alt>
+          </span>
+        </span>
+      </div>
+      <div class="avaterPop"></div>
+    </div>
+    <div class="centrality">
+      <div class="seekWrapet">
+        <span>公司名称</span>
+        <span>
+          <input type="text" v-model="form.company" class="inp_centwrt" placeholder="请输入公司名称">
+        </span>
+      </div>
+      <div class="zhecent" v-if="dialogcharac" @click="charactershurt()"></div>
+      <div class="parties" v-if="dialogcharac">
+        <div class="sequence">
+          <div
+            class="proper"
+            :class="[begrudgeadd,begrudgeId == item.id ? begrudgeActive : '']"
+            v-for="item in characterlist"
+            @click="characterClick(item.id,item.name)"
+            :key="item.index"
+          >{{item.name}}</div>
+        </div>
+      </div>
+      <div class="qualityadds">
+        <p class="quality_cents">
+          <span>公司性质</span>
+          <span class="administrate">
+            <img class="maritime_img" src="../../assets/icon/starnoteadd.png" alt>
+            <span class="department" @click="propertyClick()">
+              <span v-show="mechanism">请选择</span>
+              <span>{{proper_name}}</span>
+            </span>
+          </span>
+        </p>
+      </div>
+      <div class="zhecent" v-if="dialogproencrypt" @click="encryptshurt()"></div>
+      <div class="translate" v-if="dialogproencrypt">
+        <div class="hello">
+          <div class="btn-group">
+            <ul>
+              <li
+                class="addtents"
+                :class="[discriminateadd,discriminateId == item.id ? discriminateActive : '']"
+                v-for="(item,index) in provinceList"
+                v-on:click="proencryptClick(item.id,item.name)"
+                :key="index.item"
+              >{{item.name}}</li>
+            </ul>
+          </div>
+          <div class="wrap">
+            <ul>
+              <li
+                class="propagate"
+                :class="[exceptionaladd,exceptionalId == item.id ? exceptionalActive : '']"
+                v-for="(item,index) in citylist"
+                @click="cityClick(item.id,item.name)"
+                :key="item.index"
+              >{{item.name}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="rejiggeradd">
+        <p class="name_centssent">
+          <span>公司地址</span>
+          <span>
+            <span>{{pro_name}}</span>
+            <span>{{city_name}}</span>
+            <span class="compileradd" @click="toSelectClick()">编辑</span>
+          </span>
+        </p>
+      </div>
+
+      <div class="seekWrapet">
+        <span>公司电话</span>
+        <span>
+          <input type="text" v-model="form.company_tel" class="inp_centwrt" placeholder="请输入公司电话">
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>联系人姓名</span>
+        <span>
+          <input type="text" v-model="form.user_name" class="inp_centwrt" placeholder="请输入联系人姓名">
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>联系人电话</span>
+        <span>
+          <input type="text" v-model="form.mobile" class="inp_centwrt" placeholder="请输入联系人电话">
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>联系人邮箱</span>
+        <span>
+          <input type="text" v-model="form.email" class="inp_centwrt" placeholder="请输入联系人邮箱">
+        </span>
+      </div>
+      <div class="rejigger cent_add_suger">
+        <p class="name_cents">公司简介</p>
+        <div class="circumstantial">
+          <textarea
+            id="text_inp"
+            class="text_inp"
+            @input="monitorClick()"
+            v-model="form.company_desc"
+            maxlength="500"
+            placeholder="输入内容不超过500个字"
+          ></textarea>
+          <div class="cent_fisuger">
+            <span>
+              <span>{{grounds}}</span>/
+              <span>500</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="seekWrapet">
+        <span>公司官网</span>
+        <span>
+          <input type="text" v-model="company_url" class="inp_centwrt" placeholder="请输入公司官网">
+        </span>
+      </div>
+      <div class="seekWrapet">
+        <span>法人身份信息</span>
+        <span>
+          <input type="text" v-model="card" class="inp_centwrt" placeholder="请输入身份证信息">
+        </span>
+      </div>
+      <div class="Wrap_vent">
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_p"
+              accept="image/*"
+              @change="updatTransmit($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_p!= null">
+              <img class="img_img" :src="card_p" alt>
+            </span>
+            <span v-else-if="card_p == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">身份证正面</div>
+            </span>
+          </span>
+        </div>
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_n"
+              accept="image/*"
+              @change="updataCardreverse($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_n!= null">
+              <img class="img_img" :src="card_n" alt>
+            </span>
+            <span v-else-if="card_n == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">身份证反面</div>
+            </span>
+          </span>
+        </div>
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="card_h"
+              accept="image/*"
+              @change="updataCardhand($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="card_h!= null">
+              <img class="img_img" :src="card_h" alt>
+            </span>
+            <span v-else-if="card_h == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">手持身份证</div>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="centWptyuit">
+        <span>工商信息</span>
+        <span></span>
+      </div>
+      <div class="Wrap_vent">
+        <div class="suger_winders">
+          <span class="fixWpad">
+            <input
+              type="file"
+              name="license"
+              accept="image/*"
+              @change="industryInfor($event,1)"
+              class="inptCertone"
+            >
+            <span v-if="license!= null">
+              <img class="img_img" :src="license" alt>
+            </span>
+            <span v-else-if="license == null">
+              <div class="fin_sugeimg">
+                <img class="cent_winimg" src="../../assets/icon/tianjia.png">
+              </div>
+              <div class="ring_name">营业执照</div>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="hold">
+      <button class="keep" @click="toConservationClick()">提交</button>
+    </div>
+  </div>
+</template>
+<script>
+import { Toast, Popup, Picker, Indicator } from "mint-ui";
+import addressData from "../../../static/addressData.js";
+import "mint-ui/lib/style.css";
+import {
+  imgPreview,
+  straightSeside,
+  repeatViewsTy,
+  holdcertificateTp,
+  commerceViewWT
+} from "../../../static/imgSend.js";
+let cradIdsuger = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/;
+export default {
+  components: {
+    "mt-picker": Picker,
+    "mt-popup": Popup
+  },
+  data() {
+    return {
+      card_p: "", //身份证正面
+      card_n: "", //身份证反面
+      card_h: "", //手持身份证
+      license: "", //工商信息
+      company_url: "", //公司官网
+      card: "",
+      appellation_name: "", //公司名称存起来
+      proper_nameadd: "",
+      grounds: "0",
+      discriminateadd: "discriminateadd",
+      discriminateId: "discriminateId",
+      discriminateActive: "discriminate_Active",
+      exceptionaladd: "exceptionaladd",
+      exceptionalId: "exceptionalId",
+      exceptionalActive: "exceptional_Active",
+      begrudgeadd: "begrudgeadd",
+      begrudgeId: "begrudgeId",
+      begrudgeActive: "begrudge_Active",
+      mechanism: true, //政府机关默认显示
+      proper_type: "", //公司性质
+      proper_name: this.company_type_name, //公司性质对应name
+      address_add: "", //公司地址
+      characterlist: [],
+      provinceList: [], //省
+      citylist: [], //市
+      listArr: [],
+      pro_type: "",
+      pro_name: "",
+      city_type: "",
+      city_name: "",
+      company_type: "",
+      dialogproencrypt: false,
+      addressPickerShow: false,
+      dialogcharac: false,
+      show1: false,
+      show: false,
+      data: {
+        avatar: ""
+      },
+      form: {
+        fileList: [],
+        avatar: null, //头像
+        user_name: "", //用户名
+        email: "", //邮箱
+        mobile: "", //手机号
+        company: "", //公司名称
+        company_tel: "", //公司电话
+        company_desc: "", //公司简介
+        province: "", //省
+        city: "", //市
+        token: "",
+        company_type_name: ""
+      }
+    };
+  },
+  mounted() {
+    // this.card_p = localStorage.getItem("card_p");
+    // this.card_n = localStorage.getItem("card_n");
+    // this.card_h = localStorage.getItem("card_h");
+    // this.license = localStorage.getItem("license");
+  },
+  computed: {
+    provCityCounty: function() {
+      return this.province + " " + this.city + " " + this.area;
+    }
+  },
+  created(e) {
+    toPersonalDetails: {
+      let getuser_type = localStorage.getItem("user_type");
+      let that = this;
+      let retoken = localStorage.getItem("token");
+      that.$axios
+        .post(window.ajaxSrc + "/client/user/getinfo", {
+          token: retoken
+        })
+        .then(res => {
+          //  company_desc: that.form.company_desc,
+          if (res.data.code == 200) {
+            that.begrudgeId = res.data.data.company_type;
+            // localStorage.setItem("appellation_name", that.form.company);
+            that.form.user_name = res.data.data.user_name;
+            // localStorage.setItem("company_name", that.form.company);
+            that.form.company = res.data.data.company;
+            that.form.company_tel = res.data.data.company_tel;
+            that.form.mobile = res.data.data.mobile;
+            that.form.email = res.data.data.email;
+            that.form.company_desc = res.data.data.company_desc;
+            that.form.province = res.data.data.province_name;
+            that.form.city = res.data.data.city_name;
+            that.pro_name = that.form.province;
+            that.city_name = that.form.city;
+            that.form.avatar = res.data.data.avatar;
+            localStorage.setItem("avatar", res.data.data.avatar);
+            that.company_type = res.data.data.company_type;
+            that.proper_name = res.data.data.company_type_name;
+            that.pro_type = res.data.data.province;
+            that.city_type = res.data.data.city;
+            //
+            that.company_url = res.data.data.company_url;
+            that.card = res.data.data.card;
+            that.card_p = res.data.data.card_p;
+            that.card_n = res.data.data.card_n;
+            that.card_h = res.data.data.card_h;
+            that.license = res.data.data.license;
+            localStorage.setItem("card_p", res.data.data.card_p);
+            localStorage.setItem("card_n", res.data.data.card_n);
+            localStorage.setItem("card_h", res.data.data.card_h);
+            localStorage.setItem("license", res.data.data.license);
+
+            that.grounds = that.form.company_desc.length;
+            if (that.proper_name == undefined) {
+              that.mechanism = true;
+            } else {
+              that.mechanism = false;
+            }
+          }
+        });
+    }
+  },
+  methods: {
+    //监听
+    monitorClick() {
+      console.log(this.form.company_desc);
+      console.log("+++++++++");
+      this.grounds = this.form.company_desc.length;
+      if (this.grounds > 500) {
+        return false;
+      }
+    },
+    //企业性质
+    propertyClick() {
+      this.dialogcharac = true;
+      this.$axios
+        .post(window.ajaxSrc + "/client/index/companytype", {
+          id: this.proper_type
+        })
+        .then(res => {
+          if (res.data.code == "200") {
+            this.characterlist = res.data.data;
+          }
+          this.mechanism = false;
+        });
+    },
+    //性质内容
+    characterClick(num, str) {
+      this.begrudgeId = num;
+      this.company_type = num || "";
+      this.proper_name = str || "";
+      this.dialogcharac = false;
+      this.mechanism = false;
+      localStorage.setItem("proper_nameadd", this.company_type);
+    },
+    charactershurt() {
+      this.dialogcharac = false;
+    },
+    //地址选择
+    toSelectClick() {
+      this.dialogproencrypt = true;
+      this.$axios
+        .post(window.ajaxSrc + "/client/index/area", {
+          id: this.proId,
+          name: this.proName
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            this.provinceList = res.data.data;
+          }
+        });
+    },
+    encryptshurt() {
+      this.dialogproencrypt = false;
+    },
+    //获取市
+    proencryptClick(num, str) {
+      this.discriminateId = num;
+      this.pro_type = num || "";
+      this.pro_name = str || "";
+      //如果只选择省 那么市就清空 只显示省
+      this.city_name = "";
+      this.$axios
+        .post(window.ajaxSrc + "/client/index/city", {
+          province: num
+        })
+        .then(res => {
+          console.log(num);
+          if (res.status == 200) {
+            this.citylist = res.data.data;
+          }
+        });
+    },
+    cityClick(num, str) {
+      this.exceptionalId = num;
+      this.city_type = num || "";
+      this.city_name = str || "";
+      this.dialogproencrypt = false;
+    },
+    onValuesChange(picker, values) {
+      console.log("123");
+      console.log(picker);
+      if (values[0] > values[1]) {
+        picker.setSlotValue(1, values[0].name);
+      }
+    },
+    close() {
+      this.show1 = false;
+      this.show = false;
+    },
+    confirmFn(e) {
+      this.province = e.select1.text;
+      this.city = e.select2.text;
+      this.area = e.select3.text;
+      this.show = false;
+    },
+    toSelect() {
+      this.$axios.post(window.ajaxSrc + "/client/index/area", {}).then(res => {
+        if (res.status == 200) {
+          console.log(res);
+          res.data.data.forEach(item => {});
+        }
+      });
+      console.log("选择地址");
+    },
+    toMineinfor() {
+      this.$router.push({ name: "mine" });
+    },
+    toConservationClick() {
+      let that = this;
+      if (that.form.company == "") {
+        Toast("公司名称不能为空");
+        return false;
+      }
+      if (!/^([a-zA-Z0-9\u4e00-\u9fa5\·]{1,10})$/.test(that.form.company)) {
+        Toast("请输入格式正确的公司名称");
+        return false;
+      }
+      if (that.company_type == "") {
+        Toast("请选择公司性质");
+        return false;
+      }
+      if (that.pro_type == "" && that.city_type == "") {
+        Toast("请选择省市");
+        return false;
+      }
+      if (that.form.user_name == "") {
+        Toast("联系人姓名不能为空");
+        return false;
+      }
+      if (!/^([a-zA-Z0-9\u4e00-\u9fa5\·]{1,10})$/.test(that.form.user_name)) {
+        Toast("联系人姓名格式不正确");
+        return false;
+      }
+      if (that.form.company_tel == "") {
+        Toast("公司电话不能为空");
+        return false;
+      }
+      if (
+        !/^\d{11}$|^\d{12}|^(\d{2,3}-\d{7,10})$/.test(that.form.company_tel)
+      ) {
+        Toast("公司电话格式错误");
+        return false;
+      }
+      if (that.form.email == "") {
+        Toast("请输入邮箱");
+        return false;
+      }
+      if (
+        !/^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/.test(
+          that.form.email
+        )
+      ) {
+        Toast("邮箱格式不正确");
+        return false;
+      }
+      if (that.company_url == "") {
+        Toast("公司官网不能为空");
+        return;
+      }
+      if (that.card == "") {
+        Toast("身份证信息不能为空");
+        return;
+      }
+      if (!cradIdsuger.test(that.card)) {
+        Toast("请输入正确的身份证编号");
+        return;
+      }
+      if (that.avatar == "") {
+        Toast("请上传头像");
+        return false;
+      }
+      if (that.card_p == "") {
+        Toast("请上传身份证正面图片");
+        return false;
+      }
+      if (that.card_n == "") {
+        Toast("请上传身份证反面图片");
+        return false;
+      }
+      if (that.card_h == "") {
+        Toast("请上传手持身份证图片");
+        return false;
+      }
+      that.$axios
+        .post(window.ajaxSrc + "/client/user/setinfo", {
+          user_name: that.form.user_name,
+          avatar: that.form.avatar,
+          email: that.form.email,
+          mobile: that.form.mobile,
+          company_name: that.form.company,
+          company_type: that.company_type,
+          company_tel: that.form.company_tel,
+          company_desc: that.form.company_desc,
+          token: localStorage.getItem("token")
+            ? localStorage.getItem("token")
+            : "",
+          province: that.pro_type, //省
+          city: that.city_type, //市
+          card: that.card,
+          company_url: that.company_url,
+          card_p: this.card_p,
+          card_n: this.card_n,
+          card_h: this.card_h,
+          license: this.license
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            // console.log(that.form.company_desc);
+            // console.log("提交成功11");
+            Toast("提交成功");
+          }
+          that.$router.push({
+            name: "mine"
+          });
+          localStorage.setItem("company_name", that.form.company);
+          localStorage.setItem("appellation_name", that.form.company);
+        });
+    },
+    updataimg(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      Indicator.open();
+      setTimeout(() => {
+        Indicator.close();
+      }, 4000);
+      imgPreview(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/upavatar",
+        data: {
+          file: formData,
+          token: localStorage.getItem("token")
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("00000");
+          }
+        },
+        error: function(res) {}
+      });
+    },
+    //身份证正面
+    updatTransmit(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      straightSeside(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    //身份证反面
+    updataCardreverse(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      repeatViewsTy(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    //手持身份证
+    updataCardhand(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      holdcertificateTp(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    },
+    //工商信息
+    industryInfor(e, num) {
+      let that = this;
+      let file = e.target.files[0];
+      console.log(file);
+      console.log("753");
+      commerceViewWT(this, file, num);
+      return;
+      var formData = new FormData();
+      //上传图片
+      formData.append("img", file);
+      formData.append("type", num);
+      formData.append("uid", localStorage.id);
+      formData.append("token", localStorage.getItem("token"));
+      $.ajax({
+        type: "post",
+        url: window.ajaxSrc + "/client/user/uploadImg",
+        data: {
+          file: formData
+        },
+        dataType: "json",
+        success: function(res) {
+          if (res.code == 200) {
+            that.fileList = res.data;
+            console.log("010101");
+          }
+        },
+        error: function(res) {
+          console.log("抛出错误");
+        }
+      });
+    }
+  }
+};
+</script>
+<style scoped>
+.Wrap_vent {
+  width: 100%;
+  text-align: center;
+}
+.seekWrapet {
+  width: 100%;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+}
+.centWptyuit {
+  width: 100%;
+  margin-top: 0.3rem;
+  margin-left: 0.13rem;
+}
+.fixWpad {
+  width: 2.34rem;
+  height: 1.44rem;
+  border: 1px dashed #ccc;
+  margin-top: 0.41rem;
+  display: inline-block;
+}
+.fin_sugeimg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-left: 75px;
+  margin-top: 20px;
+}
+.ring_name {
+  font-size: 0.15rem;
+  color: #999;
+}
+.cent_winimg {
+  width: 52px;
+  height: 45px;
+  margin-top: 20px;
+}
+.inptCertone {
+  width: 2.34rem;
+  height: 1.44rem;
+  position: absolute;
+  right: 0.75rem;
+  opacity: 0;
+}
+.inp_centwrt {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 2.5rem;
+  display: inline-block;
+  text-align: right;
+}
+.avaterPop {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+  display: none;
+}
+.centaddhigh {
+  text-align: right;
+}
+.circumstantial {
+  position: relative;
+  /* margin-bottom: 0.9rem; */
+}
+.cent_fisuger {
+  height: 0.3rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.img_centadds {
+  width: 1rem;
+  height: 1rem;
+}
+.cent_centeradd {
+  height: 0.6rem;
+  border: 1px solid #ccc;
+}
+.cent_add_suger {
+  /* height: 0.8rem; */
+}
+.rejiggeradd {
+  width: 100%;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  margin-top: 0.05rem;
+  border-bottom: 1px solid #ccc;
+}
+.compileradd {
+  color: #04ae92;
+  font-size: 0.14rem;
+  margin-right: 0.2rem;
+}
+.department {
+  margin-left: 0.05rem;
+}
+.administrate {
+  height: 0.3rem;
+  margin-right: 0.2rem;
+}
+.maritime_img {
+  width: 0.15rem;
+  height: 0.15rem;
+  vertical-align: middle;
+}
+.hold {
+  margin-top: 0.2rem;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+}
+.keep {
+  width: 315px;
+  height: 44px;
+  background: linear-gradient(
+    30deg,
+    rgba(55, 163, 148, 1),
+    rgba(55, 164, 148, 1)
+  );
+  border-radius: 0.22rem;
+  color: #fff;
+  font-size: 0.15rem;
+  border: none;
+  border: 0px;
+  outline: none;
+}
+.rejigger {
+  width: 100%;
+  /* height: 0.7rem; */
+  margin-top: 0.05rem;
+}
+.qualityadds {
+  width: 100%;
+  height: 0.7rem;
+}
+.name_cents {
+  font-size: 0.14rem;
+  color: #666;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.name_centssent {
+  font-size: 0.14rem;
+  color: #666;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+}
+.quality_cents {
+  font-size: 0.14rem;
+  color: #666;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+}
+.name-pleace {
+  height: 0.4rem;
+  line-height: 0.4rem;
+}
+.inp_addinp {
+  border: none;
+  border: 0px;
+  outline: none;
+  height: 0.3rem;
+  line-height: 0.3rem;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.briefintro {
+  border: none;
+  border: 0px;
+  outline: none;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  width: 100%;
+  border: 1px solid #ccc;
+}
+.centrality {
+  width: 3.45rem;
+  margin-left: 0.13rem;
+  margin-bottom: 0.7rem;
+}
+.resettingrapper {
+  width: 3.75rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.Seongnam {
+  width: 100%;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  text-align: center;
+}
+.indiviadd {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 1rem;
+  margin-top: 0.2rem;
+}
+.inp_entering {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 1rem;
+  height: 1rem;
+  line-height: 1rem;
+  display: inline-block;
+}
+.inp_inp {
+  border: none;
+  border: 0px;
+  outline: none;
+  width: 0.43rem;
+  border: 1px solid #ccc;
+  height: 0.43rem;
+}
+.inpt_imgone {
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  /* top: 0.3rem; */
+  right: 1.3rem;
+  opacity: 0;
+  /* z-index: 999; */
+}
+.img_img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.zhecent {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+}
+.translate {
+  background: #ffffff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 3.75rem;
+  height: 4rem;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  /* background: #ffffff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 3.75rem;
+  height: 4rem;
+  position: fixed;
+  left: calc(50% - 188px);
+  bottom: 25%;
+  z-index: 100;
+  background: #fff; */
+}
+.hello {
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+}
+.btn-group {
+  width: 40%;
+  line-height: 0.44rem;
+  height: 4rem;
+  overflow-y: scroll;
+}
+.addtents {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+}
+.addtents:hover {
+  color: #05ae92;
+}
+.wrap ul {
+  background-color: #fff;
+}
+.wrap {
+  width: 100%;
+}
+.propagate {
+  color: rgba(136, 136, 136, 1);
+  text-align: center;
+  line-height: 0.44rem;
+}
+.propagate:hover {
+  color: #05ae92;
+}
+.parties {
+  width: 3.75rem;
+  height: 3.24rem;
+  position: fixed;
+  z-index: 100;
+  background: #fff;
+  left: 50%;
+  bottom: 0;
+  -webkit-transform: translate(-50%, 0%);
+  transform: translate(-50%, 0%);
+  overflow-y: scroll;
+}
+.sequence {
+  width: 100%;
+  padding: 0 0.3rem;
+  text-align: center;
+}
+.proper {
+  height: 0.32rem;
+  line-height: 0.32rem;
+  border: 1px solid #04ae92;
+  background: #fff;
+  color: #666;
+  margin-top: 0.1rem;
+}
+/* .proper :nth-of-type(2n) {
+  clear: left;
+} */
+
+.discriminate_Active {
+  color: #05ae92;
+}
+.exceptional_Active {
+  color: #05ae92;
+}
+.begrudge_Active {
+  color: #05ae92;
+}
+.interpreter {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  position: relative;
+}
+.text_inp {
+  width: 100%;
+  height: 1rem;
+  border: none;
+  border: 1px solid #ccc;
+  padding-left: 0.1rem;
+}
+.text_inp:focus {
+  outline: none;
+  border: 1px solid #ccc;
+}
+.inp_centadds:disabled {
+  border: 0;
+  border-bottom: 1px solid #ccc;
+}
+</style>

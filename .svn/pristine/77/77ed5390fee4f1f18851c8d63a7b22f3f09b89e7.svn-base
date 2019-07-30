@@ -1,0 +1,454 @@
+<template>
+  <div class="wrapperIndex">
+    <div class="slider-box">
+      <div class="banner">
+        <mt-swipe :auto="4000">
+          <mt-swipe-item v-for="(item,index) in url" :key="index">
+            <a target="_blank" :href="item.url">
+              <img :src="item.img_url" alt>
+            </a>
+          </mt-swipe-item>
+        </mt-swipe>
+        <div class="pos_weipt">
+          <img @click="establishClick()" src="../assets/icon/add_wpt.png">
+        </div>
+      </div>
+      <!--公告-->
+      <div class="annconDiv">
+        <div class="annconCont">
+          <img src="../assets/icon/anncound.png">
+
+          <vue-seamless-scroll
+            :data="proclamationlist"
+            :class-option="optionLeft"
+            class="seamless-warp2"
+          >
+            <ul class="item">
+              <li
+                v-for="(item,index) in proclamationlist"
+                :key="index"
+                @click="toActiveOpClick(item.id)"
+                v-text="item.title"
+              ></li>
+            </ul>
+          </vue-seamless-scroll>
+        </div>
+      </div>
+      <!--公告<my-Marquee :marqueeList="marqueeList" ref="liuhuan"></my-Marquee>-->
+
+      <div class="deta_fixed">
+        <div class="writ_sure">
+          <img class="writ_tag" src="../assets/icon/indexCoin.png">
+          <i class="fontS">热门企业</i>
+          <span class="allFirm" @click="toFirm">
+            查看全部
+            <img class="img_all" alt src="../assets/icon/gengduo-2.png">
+          </span>
+        </div>
+
+        <div class="fixWpet">
+          <div class="all_QUiter">
+            <ul>
+              <li v-for="(item,index) in hotArr.slice(0, 8)" :key="index" @click="companyDetalFun(item.id)">
+                <img class="quireimg" :src="item.company_log">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="Settled_Wrap">
+        <div class="fixsetting">
+          <img class="writ_tag" src="../assets/icon/indexCoin.png">
+          <i class="fontS">成功案例</i>
+        </div>
+        <div class="business_fix">
+          <div class="attend_vist cent_visited">
+            <div class="findcents">入驻企业</div>
+            <div class="suger_wpt">
+              <span class="Numcent">{{company_count}}</span>
+              <span class="Hocent">家</span>
+            </div>
+          </div>
+          <div class="attend_vist">
+            <div class="findcents">入驻人才</div>
+            <div class="suger_wpt">
+              <span class="Numcent">{{person_count}}</span>
+              <span class="Hocent">人</span>
+            </div>
+          </div>
+        </div>
+        <div class="recommend">
+          <div class="cent_quet cent_visited">
+            <div class="findcents">成功推荐</div>
+            <div class="suger_wpt">
+              <span class="Numcent">{{push_count}}</span>
+              <span class="Hocent">例</span>
+            </div>
+          </div>
+          <div class="publish_gus">
+            <span class="publish" @click="establishClick">立即发布</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="h20"></div>
+    </div>
+  </div>
+</template>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script>
+import { Spinner, Toast, InfiniteScroll, Indicator } from "mint-ui";
+import { Swipe, SwipeItem } from "mint-ui";
+export default {
+  data() {
+    return {
+      activeId: "",
+      url: [], //banner
+      proclamationlist: [],
+      hotArr: "",
+      company_count: "",
+      person_count: "",
+      push_count: ""
+    };
+  },
+  computed: {
+    optionLeft() {
+      return {
+        direction: 2,
+        limitMoveNum: 1
+      };
+    }
+  },
+  mounted: function() {
+    var user_type = localStorage.getItem("user_type"); //获取 user_type
+    this.messageList();
+    this.hotList();
+    this.successList();
+  },
+  created() {
+    this.banner();
+  },
+  methods: {
+    //获取banner
+    banner() {
+      let that = this;
+      that.$axios
+        .post(window.ajaxSrc + "/client/index/banner", {
+          type: 1
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            that.url = res.data.data;
+          }
+        });
+    },
+    //进入到活动详情页
+    toActiveOpClick(activeId) {
+      // alert("活动详情01")
+      this.$router.push({ name: "todoactive", query: { activeId: activeId } });
+    },
+    hotList() {
+      let that = this;
+      that.$axios
+        .post(window.ajaxSrc + "/client/index/companyList", {})
+        .then(res => {
+          if (res.data.code == 200) {
+            this.hotArr = res.data.data.items;
+          }
+        });
+    },
+
+    successList() {
+      let that = this;
+      that.$axios
+        .post(window.ajaxSrc + "/client/index/countHome", {})
+        .then(res => {
+          if (res.data.code == 200) {
+            this.company_count = res.data.data.company_count; //企业数量
+            this.person_count = res.data.data.person_count; //人才数量
+            this.push_count = res.data.data.push_count; //推荐数量
+          }
+        });
+    },
+
+    //根据user_type判断 1 是企业 2 是个人页面
+    establishClick() {
+      var user_type = localStorage.getItem("user_type"); //获取 user_type
+      if (user_type == 1) {
+        this.$router.push({ name: "issueresume" });
+      } else if (user_type == 2) {
+        this.$router.push({ name: "releaserecruitment" });
+      }
+      if (user_type == null) {
+        Toast({
+          message: "请先登录",
+          position: "top",
+          duration: 2000
+        });
+      }
+      //清除个人发布简历得储存
+      localStorage.removeItem("compest_name");
+      localStorage.removeItem("prov_name");
+      localStorage.removeItem("citys_name");
+      localStorage.removeItem("persp_name");
+      localStorage.removeItem("senten_name");
+      localStorage.removeItem("send_name");
+      localStorage.removeItem("redf_name");
+      localStorage.removeItem("grade_name");
+      localStorage.removeItem("curricumlist"); //清除已选择的工作经历
+      //清除企业已选得数据
+      localStorage.removeItem("cityver_name");
+      localStorage.removeItem("provea_name");
+      localStorage.removeItem("tripart_name");
+      localStorage.removeItem("incul_name");
+      localStorage.removeItem("remuner_name");
+      localStorage.removeItem("employsent_name");
+      localStorage.removeItem("demand_name");
+      // localStorage.removeItem("grass_name");
+    },
+
+    messageList() {
+      let that = this;
+      that.$axios
+        .post(window.ajaxSrc + "/client/message/list", {})
+        .then(res => {
+          if (res.data.code == 200) {
+            this.proclamationlist = res.data.data;
+          }
+        });
+    },
+
+    //跳到-招聘企业
+    toFirm() {
+      this.$router.push({ name: "firm" });
+    },
+
+    companyDetalFun(companyId){
+      this.$router.push({ name: "corporation",query:{id:companyId} });
+    }
+  }
+};
+</script>
+<style scoped>
+.wrapperIndex {
+  background: #f5f5f5;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow-x: hidden;
+}
+.recruitwrapper {
+  width: 3.75rem;
+  padding-bottom: 50px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.banner {
+  height: 1.9rem;
+  width: 3.75rem;
+  top: 0;
+  left: 0;
+}
+.banner .swiper-container {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+}
+
+.banner .swiper-container img {
+  width: 100%;
+  height: 1.9rem;
+}
+.banner a img {
+  width: 100%;
+  height: 1.9rem;
+}
+.pos_weipt {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.pos_weipt img {
+  width: 0.22rem;
+  height: 0.22rem;
+  position: fixed;
+  right: .15rem;
+}
+.notice_wrap {
+  width: 100%;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  background: #fff;
+}
+.deta_fixed {
+  width: 3.42rem;
+  height: 2rem;
+  background: #fff;
+  margin-left: 0.17rem;
+  border-radius: 10px;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  position: relative;
+}
+.sizead {
+  height: 0.1rem;
+  background: #fff;
+}
+.writ_sure {
+  width: 100%;
+  line-height: 0.3rem;
+  display: flex;
+  justify-content: space-between;
+  color: #999;
+  font-size: 0.14rem;
+  margin-bottom: 0.1rem;
+}
+.allFirm {
+  position: absolute;
+  right: 10px;
+  font-size: 12px;
+  top: 0.1rem;
+}
+.writ_tag {
+  position: absolute;
+  left: -0.05rem;
+  width: 0.65rem;
+  top: 0.1rem;
+}
+
+.fontS {
+  color: #fff;
+  font-size: 12px;
+  position: absolute;
+  font-style: normal;
+  top: 0.1rem;
+}
+.img_all {
+  width: 0.08rem;
+  height: 0.14rem;
+  vertical-align: middle;
+}
+.all_QUiter {
+  width: 100%;
+}
+.all_QUiter ul li {
+  width: 25%;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  padding: 0.15rem;
+}
+
+.all_QUiter ul li img {
+  width: 0.49rem;
+  height: 0.45rem;
+}
+
+.quireimg {
+  vertical-align: middle;
+}
+.Settled_Wrap {
+  width: 3.42rem;
+  background: #fff;
+  margin-left: 0.17rem;
+  border-radius: 10px;
+  margin-top: 0.1rem;
+  margin-bottom: 0.2rem;
+  position: relative;
+}
+.fixsetting {
+  width: 100%;
+  height: 0.3rem;
+  line-height: 0.3rem;
+}
+.business_fix {
+  width: 100%;
+  height: 0.66rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #ccc;
+}
+.attend_vist {
+  width: 1.7rem;
+  height: 0.66rem;
+}
+.publish_gus {
+  width: 1.7rem;
+  height: 0.8rem;
+  line-height: 0.8rem;
+  color: #04ae92;
+  font-weight: bold;
+  text-align: center;
+}
+.cent_quet {
+  width: 1.7rem;
+  height: 0.8rem;
+}
+.findcents {
+  text-align: center;
+  font-size: 0.12rem;
+  color: #999;
+  margin-top: 0.1rem;
+}
+.suger_wpt {
+  text-align: center;
+}
+.Numcent {
+  color: #04ae92;
+  font-weight: bold;
+  font-size: 0.24rem;
+}
+.Hocent {
+  color: #333;
+  font-size: 0.16rem;
+}
+.recommend {
+  width: 100%;
+  height: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+.cent_visited {
+  border-right: 1px dashed #ccc;
+}
+
+.annconDiv {
+  background: #fff;
+  height: 0.34rem;
+}
+.annconCont {
+  margin: 0 auto;
+  width: calc(100% - 46px);
+  line-height: 0.34rem;
+}
+
+.annconDiv img {
+  vertical-align: middle;
+
+  width: 0.16rem;
+  height: 0.16rem;
+}
+
+.seamless-warp {
+  overflow: hidden;
+}
+
+.seamless-warp2 {
+  overflow: hidden;
+  width: 3rem;
+  float: right;
+}
+.seamless-warp2 ul.item {
+  width: 1.8rem;
+}
+.seamless-warp2 ul.item li {
+  float: left;
+  margin-right: 0.3rem;
+  font-size: 12px;
+}
+.h20 {
+  height: 0.44rem;
+}
+</style>

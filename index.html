@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=yes" />
+    <meta
+      name="description"
+      content="筑才管家是一家建筑行业综合招聘平台，为建筑人才提供实习、工作机会，为建筑企业提供专业人才，帮助建筑人才和企业提供综合性的人才招聘服务。"
+    />
+    <!-- <meta name="site" content="content site" />
+    <meta name="Site" content="content Site" />
+    <meta name="title" content="content title" />
+    <meta name="Title" content="content Title" /> -->
+    <meta
+      name="keywords"
+      content="筑才管家、建筑、建筑企业、建筑招聘，人才招聘、建筑人才、人才、简历、招聘、二级建造师、一级建造师、注册工程师、注册咨询工程师、高级工程师、中级工程师、安全员、教育培训、培训、实习、全职、兼职"
+    />
+    <!-- <script src="https://cdn.bootcss.com/babel-polyfill/6.23.0/polyfill.min.js"></script> -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.js"></script> -->
+    <title>筑才管家</title>
+  </head>
+  <script src="http://apps.bdimg.com/libs/jquery/1.8.2/jquery.js"></script>
+  <script>
+    (function(doc, win) {
+      var docEl = doc.documentElement,
+        resizeEvt =
+          "orientationchange" in window ? "orientationchange" : "resize",
+        recalc = function() {
+          var clientWidth = docEl.clientWidth;
+          if (!clientWidth) return;
+          if (clientWidth >= 750) {
+            docEl.style.fontSize = "100px";
+          } else {
+            docEl.style.fontSize = 100 * (clientWidth / 375) + "px";
+          }
+        };
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener("DOMContentLoaded", recalc, false);
+    })(document, window);
+  </script>
+  <style></style>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

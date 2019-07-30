@@ -1,0 +1,156 @@
+<template>
+  <div class="worappessent">
+    <header class="releaseheaders">
+      <span class="add_img">
+        <img @click="tobackClick()" src="../../assets/icon/backadds.png" alt>
+      </span>
+      <span>消息</span>
+      <span></span>
+    </header>
+    <div class="wrapper_cents">
+        <div class="infoCont">
+          <div class="infoWrap" v-for="(item,index) in proclamationlist" @click="infoDeatil(item.id)">
+              <div class="seat15"></div>
+               <div class="wrapLi">
+                  <div class="wrapLiHead">
+                    <h2>{{item.title}}</h2>
+                    <span>{{item.create_at}}</span>
+                  </div>
+                  <div style="clear:both"></div>
+                  <div class="wrapLiBody">
+                    <p>{{item.content}}</p>
+                  </div>
+                </div>
+          </div>
+
+          
+           
+           
+        </div>
+    </div>
+  </div>
+</template>
+<script>
+import { Toast, Indicator } from "mint-ui";
+export default {
+  data() {
+    return {
+      proclamationlist: [],
+    };
+  },
+  mounted: function() {
+   
+    this.messageList();
+   
+  },
+  methods: {
+    //返回上一级
+    tobackClick() {
+      this.$router.push({ name: "mine" });
+    },
+
+     messageList() {
+      let that = this;
+      that.$axios
+        .post(window.ajaxSrc + "/client/message/list", {})
+        .then(res => {
+          if (res.data.code == 200) {
+            this.proclamationlist = res.data.data;
+            console.log(this.proclamationlist);
+          }
+        });
+    },
+
+    infoDeatil(deatilId){
+      this.$router.push({name:'todoactive',query:{activeId:deatilId}});
+    }
+  }
+};
+</script>
+<style scoped>
+.wrapper_cents {
+  width: 100%;
+  height: auto;
+  background: #F5F5F5;
+  text-align: center;
+
+}
+.wrapper_cents span{
+  font-size: 18px;
+  color:#333;
+}
+.wrapper_cents i{
+  font-size: 18px;
+  color:#999;
+  font-style: normal;
+}
+.worappessent {
+  width: 3.75rem;
+  padding-bottom: 50px;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  height: 100%;
+}
+.releaseheaders {
+  width: 100%;
+  height: 0.44rem;
+  line-height: 0.44rem;
+  color: rgba(51, 51, 51, 1);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.15rem;
+  font-size: 0.18rem;
+  background: #fff;
+}
+.add_img img {
+  height: 0.22rem;
+  vertical-align: middle;
+}
+.cent_addds img {
+  width: 100%;
+  height: 100%;
+}
+.infoCont{
+  width:calc(100% - .24rem);
+  margin:0 auto;
+  background: #fff;
+}
+.wrapLi{
+  background-color: #fff;
+}
+.wrapLiHead{
+  height: .55rem;
+  border-bottom: 1px solid #f5f5f5;
+  
+}
+.wrapLiHead h2{
+  color:#333;
+  font-size: .15rem;
+  line-height: .55rem;
+  text-align: left;
+  padding-left: .15rem;
+  float: left;
+}
+.wrapLiHead span{
+  color:#999;
+  font-size: .13rem;
+  line-height: .55rem;
+  text-align: right;
+  padding-right: .15rem;
+  float: right;
+}
+.wrapLiBody p{
+  color:#333;
+  font-size: .14rem;
+  padding:.2rem;
+  text-align: left;
+}
+.seat15{
+  height: .15rem;
+  background: #f5f5f5
+}
+</style>
+
+
