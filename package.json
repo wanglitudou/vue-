@@ -21,7 +21,7 @@
     "es6-promise": "^4.2.6",
     "lodash": "^4.17.11",
     "mint-ui": "^2.2.13",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "qs": "^6.6.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
